@@ -1,0 +1,17 @@
+# Ignore Python, Node, Go, .NET, and editor files
+*.pyc
+__pycache__/
+node_modules/
+dist/
+bin/
+obj/
+.DS_Store
+.env
+*.log
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Documentation files (not needed in repo)
+*.md

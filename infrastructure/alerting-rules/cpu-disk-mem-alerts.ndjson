@@ -1,0 +1,23 @@
+[
+  {
+    "_id": "cpu-high-usage",
+    "alertTypeId": "metrics.alert.threshold",
+    "name": "High CPU Usage",
+    "params": {"criteria": [{"comparator": ">", "threshold": [85], "metric": "system.cpu.pct", "timeSize": 5, "timeUnit": "m"}]},
+    "actions": []
+  },
+  {
+    "_id": "disk-space-critical",
+    "alertTypeId": "metrics.alert.threshold",
+    "name": "Disk Space Critical",
+    "params": {"criteria": [{"comparator": "<", "threshold": [10], "metric": "system.filesystem.pct", "timeSize": 5, "timeUnit": "m"}]},
+    "actions": []
+  },
+  {
+    "_id": "memory-pressure",
+    "alertTypeId": "metrics.alert.threshold",
+    "name": "Memory Pressure",
+    "params": {"criteria": [{"comparator": "<", "threshold": [500], "metric": "system.memory.actual.free", "timeSize": 5, "timeUnit": "m"}]},
+    "actions": []
+  }
+]

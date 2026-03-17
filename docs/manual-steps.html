@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MTN SRE Assessment: Manual Steps</title>
+  <style>body{font-family:sans-serif;max-width:800px;margin:2em auto;line-height:1.6;}h1,h2{border-bottom:1px solid #ccc;}a{color:#0057b8;}</style>
+</head>
+<body>
+<h1>Manual Steps & Walkthrough</h1>
+<ol>
+  <li><b>Elastic Cloud Setup:</b> <a href="https://cloud.elastic.co/" target="_blank">Sign up for Elastic Cloud</a> (free tier). Create a deployment and note APM Server endpoint, Elasticsearch, and Kibana URLs.</li>
+  <li><b>GCP Console:</b> <a href="https://console.cloud.google.com/" target="_blank">Access Google Cloud Console</a>. Create a GKE cluster (2+ nodes), Cloud SQL (Postgres), and Memorystore (Redis).</li>
+  <li><b>Kibana Dashboards:</b> In Kibana, go to <b>Stack Management &rarr; Saved Objects</b>, click <b>Import</b>, and upload NDJSON files from <code>dashboards/</code>.</li>
+  <li><b>Alerting Rules:</b> In Kibana, go to <b>Observability &rarr; Rules</b>, click <b>Import</b>, and upload NDJSON files from <code>infrastructure/alerting-rules/</code>.</li>
+  <li><b>Validation:</b> Use Kibana APM and Metrics Explorer to verify data ingestion and dashboards.</li>
+  <li><b>For screenshots and trace validation:</b> Follow the assessment instructions and upload screenshots as required.</li>
+</ol>
+<p>For any step requiring credentials or manual input, follow the official documentation linked above.</p>
+</body>
+</html>
