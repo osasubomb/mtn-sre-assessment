@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "@opentelemetry/auto-instrumentations-node": "^0.71.0",
+    "@opentelemetry/exporter-trace-otlp-grpc": "^0.213.0",
+    "@opentelemetry/sdk-node": "^0.213.0",
+    "elastic-apm-node": "^4.15.0"
+  }
+}

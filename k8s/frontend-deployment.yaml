@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: gcr.io/google-samples/microservices-demo/frontend:v0.4.0
+          ports:
+            - containerPort: 8080
+          env:
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://otel-agent:4317
+            - name: OTEL_SERVICE_NAME
+              value: frontend

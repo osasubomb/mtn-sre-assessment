@@ -1,59 +1,40 @@
-# OpenTelemetry Collector Gateway (Deployment) Helm values
 mode: deployment
+
+image:
+  repository: otel/opentelemetry-collector-contrib
+
 config:
   receivers:
     otlp:
       protocols:
-        grpc:
-        http:
-    zipkin:
+        grpc: {}
+        http: {}
+
   processors:
-    batch:
     memory_limiter:
       check_interval: 1s
-      limit_mib: 400
-      spike_limit_mib: 100
-    resource:
-      attributes:
-        - action: insert
-          key: k8s.namespace.name
-          from_attribute: k8s.namespace.name
-        - action: insert
-          key: k8s.deployment.name
-          from_attribute: k8s.deployment.name
-    tail_sampling:
-      policies:
-        - name: errors
-          type: status_code
-          status_code:
-            status_codes: [ERROR]
-        - name: probabilistic
-          type: probabilistic
-          probabilistic:
-            sampling_percentage: 10
+      limit_mib: 256
+    batch: {}
+
   exporters:
-    otlp:
-      endpoint: "<ELASTIC_APM_SERVER>:8200"
+    otlphttp:
+      endpoint: "https://mtn-sre-assessment-observability-fece91.apm.us-central1.gcp.elastic.cloud:443"
       headers:
-        Authorization: "Bearer <ELASTIC_APM_TOKEN>"
-      tls:
-        insecure_skip_verify: false
+        Authorization: "ApiKey VTA3MEY1MEJOY1NvalI1MFkyWEY6RU1DTXk5RmNXSS13MWFyMVlKbTRnUQ=="
+
   service:
     pipelines:
       traces:
-        receivers: [otlp, zipkin]
-        processors: [memory_limiter, resource, tail_sampling, batch]
-        exporters: [otlp]
+        receivers: [otlp]
+        processors: [memory_limiter, batch]
+        exporters: [otlphttp]
+
       metrics:
         receivers: [otlp]
-        processors: [memory_limiter, resource, batch]
-        exporters: [otlp]
+        processors: [memory_limiter, batch]
+        exporters: [otlphttp]
+
       logs:
         receivers: [otlp]
-        processors: [memory_limiter, resource, batch]
-        exporters: [otlp]
-    telemetry:
-      metrics:
-        address: ":8888"
-      zpages:
-        endpoint: ":55679"
+        processors: [memory_limiter, batch]
+        exporters: [otlphttp]

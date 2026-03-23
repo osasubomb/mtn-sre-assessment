@@ -1,0 +1,59 @@
+# OpenTelemetry Collector Gateway (Deployment) Helm values
+mode: deployment
+config:
+  receivers:
+    otlp:
+      protocols:
+        grpc:
+        http:
+    zipkin:
+  processors:
+    batch:
+    memory_limiter:
+      check_interval: 1s
+      limit_mib: 400
+      spike_limit_mib: 100
+    resource:
+      attributes:
+        - action: insert
+          key: k8s.namespace.name
+          from_attribute: k8s.namespace.name
+        - action: insert
+          key: k8s.deployment.name
+          from_attribute: k8s.deployment.name
+    tail_sampling:
+      policies:
+        - name: errors
+          type: status_code
+          status_code:
+            status_codes: [ERROR]
+        - name: probabilistic
+          type: probabilistic
+          probabilistic:
+            sampling_percentage: 10
+  exporters:
+    otlp:
+      endpoint: "<ELASTIC_APM_ENDPOINT>"
+      headers:
+        Authorization: "Bearer <ELASTIC_APM_TOKEN>"
+      tls:
+        insecure_skip_verify: false
+  service:
+    pipelines:
+      traces:
+        receivers: [otlp, zipkin]
+        processors: [memory_limiter, resource, tail_sampling, batch]
+        exporters: [otlp]
+      metrics:
+        receivers: [otlp]
+        processors: [memory_limiter, resource, batch]
+        exporters: [otlp]
+      logs:
+        receivers: [otlp]
+        processors: [memory_limiter, resource, batch]
+        exporters: [otlp]
+    telemetry:
+      metrics:
+        address: ":8888"
+      zpages:
+        endpoint: ":55679"

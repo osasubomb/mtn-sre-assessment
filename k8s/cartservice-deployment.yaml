@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cartservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cartservice
+  template:
+    metadata:
+      labels:
+        app: cartservice
+    spec:
+      containers:
+        - name: cartservice
+          image: gcr.io/google-samples/microservices-demo/cartservice:v0.4.0
+          ports:
+            - containerPort: 7070
+          env:
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://otel-agent:4317
+            - name: OTEL_SERVICE_NAME
+              value: cartservice

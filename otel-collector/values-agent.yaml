@@ -1,63 +1,49 @@
-# OpenTelemetry Collector Agent (DaemonSet) Helm values
 mode: daemonset
+
+image:
+  repository: otel/opentelemetry-collector-contrib
+
 config:
   receivers:
     otlp:
       protocols:
-        grpc:
-        http:
+        grpc: {}
+        http: {}
+
     hostmetrics:
       collection_interval: 10s
       scrapers:
-        cpu:
-        memory:
-        disk:
-        filesystem:
-        network:
-    zipkin:
+        cpu: {}
+        memory: {}
+        disk: {}
+        filesystem: {}
+        network: {}
+
   processors:
-    batch:
     memory_limiter:
       check_interval: 1s
-      limit_mib: 400
-      spike_limit_mib: 100
-    resource:
-      attributes:
-        - action: insert
-          key: k8s.node.name
-          from_attribute: k8s.node.name
-        - action: insert
-          key: k8s.pod.name
-          from_attribute: k8s.pod.name
-        - action: insert
-          key: k8s.namespace.name
-          from_attribute: k8s.namespace.name
-        - action: insert
-          key: k8s.deployment.name
-          from_attribute: k8s.deployment.name
+      limit_mib: 256
+    batch: {}
+
   exporters:
     otlp:
-      endpoint: "<ELASTIC_APM_SERVER>:8200"
-      headers:
-        Authorization: "Bearer <ELASTIC_APM_TOKEN>"
+      endpoint: otel-gateway-opentelemetry-collector:4317
       tls:
-        insecure_skip_verify: false
+        insecure: true
+
   service:
     pipelines:
       traces:
-        receivers: [otlp, zipkin]
-        processors: [memory_limiter, resource, batch]
-        exporters: [otlp]
+        receivers: [otlp]
+        processors: [memory_limiter, batch]
+        exporters: [otlphttp]
+
       metrics:
         receivers: [otlp, hostmetrics]
-        processors: [memory_limiter, resource, batch]
-        exporters: [otlp]
+        processors: [memory_limiter, batch]
+        exporters: [otlphttp]
+
       logs:
         receivers: [otlp]
-        processors: [memory_limiter, resource, batch]
-        exporters: [otlp]
-    telemetry:
-      metrics:
-        address: ":8888"
-      zpages:
-        endpoint: ":55679"
+        processors: [memory_limiter, batch]
+        exporters: [otlphttp]

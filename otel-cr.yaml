@@ -1,0 +1,63 @@
+apiVersion: opentelemetry.io/v1alpha1
+kind: OpenTelemetryCollector
+metadata:
+  name: mtntoggle-collector
+  namespace: opentelemetry-operator-system
+spec:
+  mode: deployment
+  config: |
+    receivers:
+      otlp:
+        protocols:
+          grpc: {}
+          http: {}
+      hostmetrics:
+        collection_interval: 10s
+        scrapers:
+          cpu: {}
+          memory: {}
+          disk: {}
+          filesystem: {}
+          network: {}
+      zipkin: {}
+    processors:
+      batch: {}
+      memory_limiter:
+        check_interval: 1s
+        limit_mib: 400
+        spike_limit_mib: 100
+      resource:
+        attributes:
+          - action: insert
+            key: k8s.node.name
+            from_attribute: k8s.node.name
+          - action: insert
+            key: k8s.pod.name
+            from_attribute: k8s.pod.name
+          - action: insert
+            key: k8s.namespace.name
+            from_attribute: k8s.namespace.name
+          - action: insert
+            key: k8s.deployment.name
+            from_attribute: k8s.deployment.name
+    exporters:
+      otlp:
+        endpoint: ${ELASTIC_APM_ENDPOINT}
+        headers:
+          Authorization: "Bearer ${ELASTIC_APM_TOKEN}"
+        tls:
+          insecure_skip_verify: false
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp, zipkin]
+          processors: [memory_limiter, resource, batch]
+          exporters: [otlp]
+        metrics:
+          receivers: [otlp, hostmetrics]
+          processors: [memory_limiter, resource, batch]
+          exporters: [otlp]
+        logs:
+          receivers: [otlp]
+          processors: [memory_limiter, resource, batch]
+          exporters: [otlp]

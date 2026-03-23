@@ -1,0 +1,22 @@
+# Example Elastic Agent Fleet policy for system, PostgreSQL, Redis, NGINX
+inputs:
+  - type: system/metrics
+    enabled: true
+    streams:
+      - data_stream.dataset: system.cpu
+      - data_stream.dataset: system.memory
+      - data_stream.dataset: system.diskio
+      - data_stream.dataset: system.filesystem
+      - data_stream.dataset: system.network
+  - type: postgresql/metrics
+    enabled: true
+    hosts: ["34.123.59.20:5432"]
+    username: <POSTGRES_USER>
+    password: <POSTGRES_PASS>
+  - type: redis/metrics
+    enabled: true
+    hosts: ["10.2.241.251:6379"]
+  - type: nginx/metrics
+    enabled: true
+    hosts: ["<NGINX_METRICS_ENDPOINT>"]
+
